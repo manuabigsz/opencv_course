@@ -40,3 +40,35 @@ plt.show()
 
 
 #### TASK: (NOTE: YOU WILL NEED TO RUN THIS AS A SCRIPT). Create a script that opens the picture and allows you to draw empty red circles whever you click the RIGHT MOUSE BUTTON DOWN.
+drawing = False
+ix,iy = -1,-1
+
+def draw_circle(event, x, y, flags, params):
+    global ix, iy, drawing, img
+    
+    if event == cv2.EVENT_LBUTTONDOWN:
+        drawing = True
+        ix, iy = x, y
+    
+    elif event == cv2.EVENT_MOUSEMOVE:
+        if drawing:
+            temp = img.copy()
+            radius = int(((x - ix)**2 + (y - iy)**2)**0.5)
+            cv2.circle(temp, (ix, iy), radius, (255, 0, 0), 2)
+            cv2.imshow('my_draw', temp)
+    
+    elif event == cv2.EVENT_LBUTTONUP:
+        drawing = False
+        radius = int(((x - ix)**2 + (y - iy)**2)**0.5)
+        cv2.circle(img, (ix, iy), radius, (0, 255, 0), 2)
+
+img = np.zeros((512, 512, 3), dtype=np.uint8)
+cv2.namedWindow('my_draw')
+cv2.setMouseCallback('my_draw', draw_circle)
+
+while True:
+    cv2.imshow('my_draw', img)
+    if cv2.waitKey(1) & 0xFF == 27: 
+        break
+
+cv2.destroyAllWindows()
